@@ -6,6 +6,30 @@ Challenge:
 3. We could improve index.js by moving one line
    of code to a better position. Find it and move it!
 */
+document.addEventListener('submit', function(e){
+    if (e.target.id == "comment-form") {
+        e.preventDefault()
+        addNewComment(e.target)
+    }
+})
+
+function addNewComment(commentForm) {
+    const commentFormData = new FormData(commentForm)
+    let targetTweetObj = tweetsData.filter(function(tweet){
+        return tweet.uuid == commentForm.dataset.tweetuuid
+    })[0]
+    targetTweetObj.replies.unshift(
+        {
+            handle: `@Scrimba`,
+            profilePic: `images/scrimbalogo.png`,
+            tweetText: commentFormData.get("comment"),
+        }
+    )
+
+    render()
+    handleReplyClick(targetTweetObj.uuid)
+
+}
 
 document.addEventListener('click', function(e){
     if(e.target.dataset.like){
@@ -148,6 +172,12 @@ function getFeedHtml(){
         </div>            
     </div>
     <div class="hidden" id="replies-${tweet.uuid}">
+        <div class="comment" id="comment">
+            <form id="comment-form" data-tweetuuid="${tweet.uuid}">
+                <textarea name="comment" placeholder="type your reply..."></textarea>
+                <button>Reply</button>
+            </form>
+        </div>
         ${repliesHtml}
     </div>   
 </div>
